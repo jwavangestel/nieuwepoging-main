@@ -1,7 +1,8 @@
 <template>
     <div class="board">
+      {{ columns }}
       <div class="flex flex-row items-start">
-          <div class="column" v-for="(column, $columnIdex) of board.board.columns" :key="$columnIdex" > 
+        <div class="column" v-for="(column, $columnIdex) of columns" :key="$columnIdex" > 
             <div class="flex items-center mb-2 font-bold">
               {{ column.name }}
             </div>
@@ -14,27 +15,30 @@
                   {{ task.description }}
                 </p>
               </div>
-            </div>
-          </div>
+            </div>  
+        </div> 
+    
       </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useTodoListStore } from '@/stores/todoList'
+import { onMounted, ref } from 'vue';
+import axios from 'axios'
+
+const columns = ref(null)
+
+onMounted(() => {
+  axios.get(`https://my-json-server.typicode.com/jwavangestel/nieuwepoging/columns`)
+  .then((response) => {
+    columns.value = response.data
+  })
  
-//const todo = ref('')
 
-const board = useTodoListStore()
+  
+})
 
-//function addItemAndClear(item) {
-//  if (item.lenght === 0) {
-//    return
-//  }
-//  store.addTodo(item)
-//  todo.value = ''
-//}
+
       
 </script>
 
