@@ -29,7 +29,7 @@ import axios from 'axios'
 const columns = ref(null)
 
 onMounted(() => {
-  axios.get(`https://my-json-server.typicode.com/jwavangestel/nieuwepoging/columns`)
+  axios.get(`https://my-json-server.typicode.com/jwavangestel/nieuwepoging-main/columns`)
   .then((response) => {
     columns.value = response.data
   })
