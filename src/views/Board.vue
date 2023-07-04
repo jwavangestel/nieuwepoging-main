@@ -1,8 +1,8 @@
 <template>
     <div class="board">
-      {{ columns }}
-      <div class="flex flex-row items-start">
-        <div class="column" v-for="(column, $columnIdex) of columns" :key="$columnIdex" > 
+        {{ boardStore.columns }}
+        <div class="flex flex-row items-start">
+          <div class="column" v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
             <div class="flex items-center mb-2 font-bold">
               {{ column.name }}
             </div>
@@ -15,29 +15,35 @@
                   {{ task.description }}
                 </p>
               </div>
-            </div>  
-        </div> 
-    
+            </div>
+          </div>
       </div>
     </div>
 </template>
 
-<script setup>
-import { onMounted, ref } from 'vue';
-import axios from 'axios'
+<script>
+import { useBoardStore } from '../stores/BoardStore'
 
-const columns = ref(null)
+export default {
+  setup() {
+    const boardStore = useBoardStore()
 
-onMounted(() => {
-  axios.get(`http://localhost:3000/columns`)
-  .then((response) => {
-    columns.value = response.data
-  })
+    return{
+      boardStore
+    }
+  },
+  created() {
+    this.boardStore.fetchColumns().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      }
  
+      )
+    })
+  }
 
-  
-})
-
+}
 
       
 </script>
