@@ -1,26 +1,12 @@
 <script>
 import { RouterLink, RouterView } from 'vue-router'
-import { useUserStore } from './stores/UserStore'
-import { useBoardStore } from './stores/BoardStore'
 
-export default {
-  setup() {
-    const userStore = useUserStore()
-    const boardStore = useBoardStore()
-
-    return {
-      userStore,
-      boardStore
-    }
-  }
-
-}
 </script>
 
 <template>
   
   <div id="app">
-    <p>Logged in as {{ userStore.user }} with name: {{ boardStore.naam }}</p>
+
     <router-view/>
   </div>
 </template>

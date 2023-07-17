@@ -1,49 +1,47 @@
 {
-    "columns": [
-      {
-        "name": "todo",
-        "tasks": [
-          {
-            "description": "",
-            "name": "first task",
-            "id": 1,
-            "userAssigned": null
-          },
-          {
-            "description": "",
-            "name": "second task",
-            "id": 2,
-            "userAssigned": null
-          },
-          {
-            "description": "",
-            "name": "and third",
-            "id": 3,
-            "userAssigned": null
-          }
-        ]
-      },
-      {
-        "name": "in-progress",
-        "tasks": [
-          {
-            "description": "",
-            "name": "first task",
-            "id": 4,
-            "userAssigned": null
-          }
-        ]
-      },
-      {
-        "name": "done",
-        "tasks": [
-          {
-            "description": "",
-            "name": "first task",
-            "id": 5,
-            "userAssigned": null
-          }
-        ]
-      }
-    ]
-  }
+  "board": [
+    {
+      "sc_id": 1,
+      "jsonb_agg": [
+        {
+          "t_id": 1,
+          "t_titel": "Stofzuigen",
+          "omschrijving": "Kamer stofzuigen"
+        },
+        {
+          "t_id": 2,
+          "t_titel": "Auto wassen",
+          "omschrijving": null
+        },
+        {
+          "t_id": 3,
+          "t_titel": "Grasmaaien",
+          "omschrijving": "Grasmaaien achtertuin"
+        }
+      ],
+      "description": "Todo"
+    },
+    {
+      "sc_id": 2,
+      "jsonb_agg": [
+        {
+          "t_id": 4,
+          "t_titel": "Deuren schilderen",
+          "omschrijving": "Aan twee kanten met ral 9010"
+        }
+      ],
+      "description": "in_progress"
+    },
+    {
+      "sc_id": 3,
+      "jsonb_agg": [
+        {
+          "t_id": 5,
+          "t_titel": "Twee kratten bier halen",
+          "omschrijving": "Bavaria of Dommels"
+        }
+      ],
+      "description": "done"
+    }
+  ]
+}

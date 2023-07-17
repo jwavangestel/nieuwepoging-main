@@ -13,7 +13,8 @@ const router = createRouter({
         {
           path: 'task/:id',
           name: 'task',
-          component: Task
+          component: Task,
+          params: ':id'
         }
       ]
     },

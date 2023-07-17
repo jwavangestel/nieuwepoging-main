@@ -6,12 +6,20 @@ export const useBoardStore = defineStore('BoardStore', {
         return {
             columns: [],
             column: {},
-            naam: 'Jan van Gestel'
+
         }
     },
     getters: {
-        firstName() {
-            return this.naam.split(' ')[0]
+        GoToTask (state) {
+            return (id) => {
+                for(const column of state.board.columns) {
+                    for (const task of column.tasks) {
+                        if (task.id === id) {
+                            return task
+                        }
+                    }
+                }
+            }
         }
 
     },

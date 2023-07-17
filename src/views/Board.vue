@@ -1,22 +1,25 @@
 <template>
     <div class="board">
-        {{ boardStore.columns }}
+ 
         <div class="flex flex-row items-start">
           <div class="column" v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
             <div class="flex items-center mb-2 font-bold">
-              {{ column.name }}
+              {{ column.description }}
             </div>
             <div class="list-reset">
-              <div class="task" v-for="(task, $taskIndex) of column.tasks" :key="$taskIndex">
+              <div class="task" v-for="(task, $taskIndex) of column.jsonb_agg" :key="$taskIndex" @click="GoToTask(task)">
                 <span class="w-full flex-no-shrink font-bold">
-                  {{ task.name }}
+                  {{ task.t_titel }}
                 </span>
-                <p v-if="task.description"  class="w-full flex-no-shrink mt-1 test-sm">
-                  {{ task.description }}
+                <p v-if="task.omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
+                  {{ task.omschrijving }}
                 </p>
               </div>
             </div>
           </div>
+      </div>
+      <div class="task-bg" v-if="isTaskOpen">
+        <router-view/>
       </div>
     </div>
 </template>
@@ -32,6 +35,11 @@ export default {
       boardStore
     }
   },
+  computed: {
+    isTaskOpen () {
+      return this.$route.name === 'task'
+    }
+  },
   created() {
     this.boardStore.fetchColumns().catch(error=> {
       this.$router.push({
@@ -41,6 +49,11 @@ export default {
  
       )
     })
+  },
+  methods: {
+    GoToTask (task) {
+      this.$router.push({ name: 'task', params: { id: task.id}})
+    }
   }
 
 }
@@ -63,8 +76,6 @@ export default {
 }
 
 .task-bg {
-  @apply absolute;
-  background: rgba(0,0,0,0.5);
-}
 
+}
 </style>
