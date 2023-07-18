@@ -1,13 +1,13 @@
 <template>
     <div class="board">
- 
+      <div v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
         <div class="flex flex-row items-start">
-          <div class="column" v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
-            <div class="flex items-center mb-2 font-bold">
-              {{ column.description }}
+          <div   class='column' v-for="(board, $boardIdex) of column.jsonb_build_object.board" :key="$columnIdex" > 
+            <div class="flex items-center mb-2 font-bold"  >
+              {{ board.description }}
             </div>
             <div class="list-reset">
-              <div class="task" v-for="(task, $taskIndex) of column.jsonb_agg" :key="$taskIndex" @click="GoToTask(task)">
+              <div class="task" v-for="(task, $taskIndex) of board.jsonb_agg" :key="$taskIndex">
                 <span class="w-full flex-no-shrink font-bold">
                   {{ task.t_titel }}
                 </span>
@@ -16,10 +16,8 @@
                 </p>
               </div>
             </div>
-          </div>
-      </div>
-      <div class="task-bg" v-if="isTaskOpen">
-        <router-view/>
+          </div>         
+        </div>
       </div>
     </div>
 </template>
