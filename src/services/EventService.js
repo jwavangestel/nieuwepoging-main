@@ -14,7 +14,7 @@ export default {
   getColumns() {
     return apiClient.get('/board')
   },
-  getColumn(id) {
-    return apiClient.get('/columns/' + id)
+  getTaak(id) {
+    return apiClient.get('/taak/' + id)
   }
 }

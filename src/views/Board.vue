@@ -1,5 +1,6 @@
 <template>
     <div class="board">
+
       <div v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
         <div class="flex flex-row items-start">
           <div   class='column' v-for="(board, $boardIdex) of column.jsonb_build_object.board" :key="$columnIdex" > 
@@ -7,18 +8,25 @@
               {{ board.description }}
             </div>
             <div class="list-reset">
-              <div class="task" v-for="(task, $taskIndex) of board.jsonb_agg" :key="$taskIndex">
+              <div class="task" v-for="(task, $taskIndex) of board.jsonb_agg" :key="$taskIndex" @click="goToTask(task)">
                 <span class="w-full flex-no-shrink font-bold">
                   {{ task.t_titel }}
+                  {{ task.t_id }}
                 </span>
                 <p v-if="task.omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
                   {{ task.omschrijving }}
                 </p>
               </div>
+              <input type="text" class="block p2 w-full bg-transparent" placeholder="+ Enter new task">
             </div>
           </div>         
         </div>
       </div>
+      <div  class="task-bg" v-if="isTaskOpen" @click="close" @keyup="createTask">
+        <router-view/>
+      </div>
+
+
     </div>
 </template>
 
@@ -49,8 +57,20 @@ export default {
     })
   },
   methods: {
-    GoToTask (task) {
-      this.$router.push({ name: 'task', params: { id: task.id}})
+    goToTask (task) {
+      this.boardStore.fetchTaak(task.t_id).catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    })
+      this.$router.push({ name: 'task', params: { id: task.t_id}})
+    },
+    close () {
+      this.$router.push({ name: 'Board' })
+    },
+    createTask(e) {
+      console.log(e)
     }
   }
 
@@ -74,6 +94,5 @@ export default {
 }
 
 .task-bg {
-
 }
 </style>

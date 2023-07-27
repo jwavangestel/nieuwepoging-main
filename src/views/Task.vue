@@ -1,21 +1,13 @@
 <template>
-  <div class="task-view">
-    <div class="flex flex-col flex-grow items-start justify-between px-4">
-         
-        <div v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
-   
+  <div v-for="(task, $taskIndex) of boardStore.taak" :key="$taskIndex" > 
+    <div class="task-view">
+      <div class="flex flex-col flex-grow items-start justify-between px-4">
+         <div class="flex items-center mb-2 font-bold" >
+             {{ task.titel }}
+         </div>
+         <textarea class="relative bg-transparent px-2 border mt-2 h-64 border-none leading-normal" :value="task.omschrijving"></textarea>
 
- 
-          <div class="task" v-for="(task, $taskIndex) of column.tasks" :key="$taskIndex" >
-
-
-
-            <p v-if="task.id === 4" >
-              {{ task.name }}
-            </p>
-          </div>
-
-        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -27,26 +19,29 @@ import { ref } from 'vue'
 export default {
   setup() {
     const boardStore = useBoardStore()
-    const id = ref(3)
+    const id = 4
 
     return{
       boardStore
     }
   },
+
   computed: {
-    isTaskOpen () {
-      return this.$route.name === 'task'
+    task() {
+      return this.getTask(this.$route)
     }
+  
   },
+  
   created() {
-    this.boardStore.fetchColumns().catch(error=> {
-      this.$router.push({
-        name: 'ErrorDisplay',
-        params: { error: error}
-      }
+   // this.boardStore.fetchTaak(5).catch(error=> {
+    // this.$router.push({
+    //    name: 'ErrorDisplay',
+    //    params: { error: error}
+    //  }
  
-      )
-    })
+    //  )
+   // }
   }
 }
 
