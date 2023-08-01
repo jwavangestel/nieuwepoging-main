@@ -6,6 +6,11 @@
              {{ task.titel }}
          </div>
          <textarea class="relative bg-transparent px-2 border mt-2 h-64 border-none leading-normal" :value="task.omschrijving"></textarea>
+         <div>
+          <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+            Close en Save
+          </button>
+         </div>
 
       </div>
     </div>

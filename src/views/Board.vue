@@ -17,12 +17,12 @@
                   {{ task.omschrijving }}
                 </p>
               </div>
-              <input type="text" class="block p2 w-full bg-transparent" placeholder="+ Enter new task">
+              <input type="text"  value='' class="block p2 w-full bg-transparent" placeholder="+ Enter new task" @keyup.enter="createTask($event, board.sc_id, value)">
             </div>
           </div>         
         </div>
       </div>
-      <div  class="task-bg" v-if="isTaskOpen" @click="close" @keyup="createTask">
+      <div  class="task-bg" v-if="isTaskOpen" >
         <router-view/>
       </div>
 
@@ -36,6 +36,7 @@ import { useBoardStore } from '../stores/BoardStore'
 export default {
   setup() {
     const boardStore = useBoardStore()
+
 
     return{
       boardStore
@@ -69,13 +70,34 @@ export default {
     close () {
       this.$router.push({ name: 'Board' })
     },
-    createTask(e) {
-      console.log(e)
+    createTask(e, column) {
+      this.boardStore.newTaak.sc_id = column
+      this.boardStore.newTaak.titel = e.target.value
+      console.log(this.boardStore.newTaak.sc_id, e.target.value)
+      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'cent')
+      this.boardStore.addTaak(this.boardStore.newTaak).catch(error=> {
+        this.$router.push({
+          name: 'ErrorDisplay',
+          params: { error: error}
+        })
+      })
+      this.boardStore.newTaak.sc_id = ''
+      this.boardStore.newTaak.titel = ''
+      e.target.value = ''
+      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'inner')
+      this.boardStore.fetchColumns().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      }
+ 
+      )
+    })
+ //     this.$router.push({ name: 'Board'})
     }
+    
   }
-
 }
-
       
 </script>
 
@@ -94,5 +116,6 @@ export default {
 }
 
 .task-bg {
+  background: rgba(0,0,0,0);
 }
 </style>

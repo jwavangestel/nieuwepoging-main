@@ -16,5 +16,9 @@ export default {
   },
   getTaak(id) {
     return apiClient.get('/taak/' + id)
+  },
+  addTaak(nieuweTaak) {
+    console.log('fuut' + nieuweTaak.sc_id + nieuweTaak.titel)
+    return apiClient.post("/addTaak?sc_id=" + nieuweTaak.sc_id + "&titel=" + nieuweTaak.titel)
   }
 }
