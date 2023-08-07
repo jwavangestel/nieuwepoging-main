@@ -1,5 +1,7 @@
 <template>
   <div v-for="(task, $taskIndex) of boardStore.taak" :key="$taskIndex" > 
+    zuur
+      {{ boardStore.taak[0] }})
     <div class="task-view">
       <div class="flex flex-col flex-grow items-start justify-between px-4">
         <div class="form-container w-full">
@@ -34,6 +36,7 @@ import { ref, toHandlers } from 'vue'
 
 export default {
   setup() {
+
     const boardStore = useBoardStore()
 
 
@@ -44,12 +47,14 @@ export default {
 
   computed: {
     task() {
+      console.log("xeomi")
       return this.getTask(this.$route)
     }
   
   },
   
   created() {
+    console.log("yvonne")
    // this.boardStore.fetchTaak(5).catch(error=> {
     // this.$router.push({
     //    name: 'ErrorDisplay',
@@ -75,14 +80,16 @@ export default {
           params: { error: error}
         })
       })
-      this.boardStore.fetchColumns().catch(error=> {
-      this.$router.push({
-        name: 'ErrorDisplay',
-        params: { error: error}
-      }
+//      this.boardStore.fetchColumns().catch(error=> {
+//      this.$router.push({
+//        name: 'ErrorDisplay',
+//        params: { error: error}
+//        })
+//      })
+      this.$router.push({ name: 'Board' })
  
-      )
-    })
+    
+//    })
     }
   }
 }

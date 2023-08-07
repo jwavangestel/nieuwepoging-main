@@ -52,19 +52,36 @@ export default {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
-      }
- 
-      )
+      })
     })
+  },
+  onload() {
+    console.log('Noot')
+    this.boardStore.fetchColumns().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    })
+  },
+  watch: {
+ 
+    boardStore() {
+      console.log('Mees')
+    }
+
+
   },
   methods: {
     goToTask (task) {
+      console.log("wees")
       this.boardStore.fetchTaak(task.t_id).catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
       })
     })
+      console.log("vuur")
       this.$router.push({ name: 'task', params: { id: task.t_id}})
     },
     close () {
@@ -89,10 +106,8 @@ export default {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
-      }
- 
-      )
-    })
+        })
+      })
  //     this.$router.push({ name: 'Board'})
     }
     
