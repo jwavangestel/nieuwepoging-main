@@ -48,40 +48,36 @@ export default {
     }
   },
   created() {
+    console.log('Peer')
     this.boardStore.fetchColumns().catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
       })
     })
+
   },
-  onload() {
+  async onload() {
     console.log('Noot')
-    this.boardStore.fetchColumns().catch(error=> {
+    await this.boardStore.fetchColumns().catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
       })
     })
   },
-  watch: {
  
-    boardStore() {
-      console.log('Mees')
-    }
 
-
-  },
   methods: {
     goToTask (task) {
-      console.log("wees")
+//      console.log("wees")
       this.boardStore.fetchTaak(task.t_id).catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
       })
     })
-      console.log("vuur")
+//      console.log("vuur")
       this.$router.push({ name: 'task', params: { id: task.t_id}})
     },
     close () {
@@ -90,8 +86,8 @@ export default {
     createTask(e, column) {
       this.boardStore.newTaak.sc_id = column
       this.boardStore.newTaak.titel = e.target.value
-      console.log(this.boardStore.newTaak.sc_id, e.target.value)
-      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'cent')
+//      console.log(this.boardStore.newTaak.sc_id, e.target.value)
+//      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'cent')
       this.boardStore.addTaak(this.boardStore.newTaak).catch(error=> {
         this.$router.push({
           name: 'ErrorDisplay',
@@ -101,7 +97,7 @@ export default {
       this.boardStore.newTaak.sc_id = ''
       this.boardStore.newTaak.titel = ''
       e.target.value = ''
-      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'inner')
+//      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'inner')
       this.boardStore.fetchColumns().catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',

@@ -31,8 +31,10 @@ export const useBoardStore = defineStore('BoardStore', {
     },
     actions: {
         fetchColumns() {
+            console.log("quincy")
             return EventService.getColumns()
             .then(response => {
+//                console.log("poes")
                 this.columns=response.data
             })
             .catch(error => {
@@ -51,23 +53,23 @@ export const useBoardStore = defineStore('BoardStore', {
         },
 
         addTaak(newTaak) {
-            console.log(newTaak.sc_id + ' ' + newTaak.titel + " aap")
+//            console.log(newTaak.sc_id + ' ' + newTaak.titel + " aap")
             return EventService.addTaak(newTaak)
             .then(response => {
-                console.log('eend')
+//                console.log('eend')
                 this.taak=response.data
             })
             .catch(error => {
-                console.log('duim')
+//               console.log('duim')
                 throw error
             })            
         },
 
         updateTaak(newTaak) {
-            console.log(newTaak.sc_id + ' ' + newTaak.titel + newTaak.titel + " cent")
+//            console.log(newTaak.sc_id + ' ' + newTaak.titel + newTaak.titel + " cent")
             return EventService.updateTaak(newTaak)
             .then(response => {
-                console.log('eend')
+//                console.log('eend')
                 this.taak=response.data
             })
             .catch(error => {

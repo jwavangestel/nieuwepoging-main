@@ -1,7 +1,5 @@
 <template>
   <div v-for="(task, $taskIndex) of boardStore.taak" :key="$taskIndex" > 
-    zuur
-      {{ boardStore.taak[0] }})
     <div class="task-view">
       <div class="flex flex-col flex-grow items-start justify-between px-4">
         <div class="form-container w-full">
@@ -38,10 +36,14 @@ export default {
   setup() {
 
     const boardStore = useBoardStore()
+    const colIndex = 0
+    const taskIndex = 1
 
 
     return{
-      boardStore
+      boardStore,
+      colIndex,
+      taskIndex
     }
   },
 
@@ -54,7 +56,7 @@ export default {
   },
   
   created() {
-    console.log("yvonne")
+   // console.log("yvonne")
    // this.boardStore.fetchTaak(5).catch(error=> {
     // this.$router.push({
     //    name: 'ErrorDisplay',
@@ -66,27 +68,55 @@ export default {
   },
 
   methods: {
-    close () {
-      console.log("closed " + this.boardStore.taak[0].omschrijving)
+     close () {
+//      console.log("closed " + this.boardStore.taak[0].omschrijving)
       this.boardStore.newTaak.task_id = this.boardStore.taak[0].task_id
       this.boardStore.newTaak.sc_id = this.boardStore.taak[0].sc_id
       this.boardStore.newTaak.titel = this.boardStore.taak[0].titel
       this.boardStore.newTaak.omschrijving = this.boardStore.taak[0].omschrijving
-      console.log("Kauw " + this.boardStore.newTaak.task_id)
 
-      this.boardStore.updateTaak(this.boardStore.taak[0]).catch(error=> {
+      let colIndex = 0
+      let taskIndex = 0
+      let beer = []
+      let end = ''
+      let y = 0
+//      console.log(this.boardStore.columns[0].jsonb_build_object.board.length)
+      for (let c = 0; c < this.boardStore.columns[0].jsonb_build_object.board.length; c++) {
+            beer = this.boardStore.columns[0].jsonb_build_object.board[c]
+//            console.log("length " + beer.jsonb_agg.length)
+            for (let i = 0; i < beer.jsonb_agg.length; i++) {
+//               console.log("pipo" + beer.jsonb_agg[i].t_id)
+               if(beer.jsonb_agg[i].t_id === this.boardStore.newTaak.task_id) {
+                colIndex = c
+                taskIndex = i
+//                console.log("Hoera! " + colIndex + ' ' + taskIndex)
+                { break }
+               }
+            }
+       }
+       
+
+  
+
+      this.boardStore.columns[0].jsonb_build_object.board[colIndex].jsonb_agg[taskIndex].omschrijving = this.boardStore.taak[0].omschrijving
+ //     console.log('ruud2' + this.boardStore.columns[0].jsonb_build_object.board[colIndex].jsonb_agg[taskIndex].t_id)
+ //     console.log('ruud3' + this.boardStore.columns[0].jsonb_build_object.board[colIndex].jsonb_agg[taskIndex].omschrijving)
+
+       this.boardStore.updateTaak(this.boardStore.taak[0]).catch(error=> {
         this.$router.push({
           name: 'ErrorDisplay',
           params: { error: error}
         })
       })
-//      this.boardStore.fetchColumns().catch(error=> {
-//      this.$router.push({
-//        name: 'ErrorDisplay',
-//        params: { error: error}
-//        })
-//      })
-      this.$router.push({ name: 'Board' })
+      //this.boardStore.fetchColumns().catch(error=> {
+     //this.$router.push({
+     //   name: 'ErrorDisplay',
+     //  params: { error: error}
+     //  })
+     //})
+  
+     this.$router.push({ name: 'Board' })
+
  
     
 //    })
