@@ -3,12 +3,19 @@
 
       <div v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
         <div class="flex flex-row items-start">
-          <div   class='column' v-for="(board, $boardIdex) of column.jsonb_build_object.board" :key="$columnIdex" > 
+          <div   class='column' v-for="(board, $boardIndex) of column.jsonb_build_object.board" :key="$boardIndex" 
+                  @drop="moveTask($event, board.jsonb_agg)"
+                  @dragover.prevent
+                  @dragenter.prevent
+          > 
+
             <div class="flex items-center mb-2 font-bold"  >
               {{ board.description }}
             </div>
             <div class="list-reset">
-              <div class="task" v-for="(task, $taskIndex) of board.jsonb_agg" :key="$taskIndex" @click="goToTask(task)">
+              <div class="task" v-for="(task, $taskIndex) of board.jsonb_agg" :key="$taskIndex" 
+                  draggable="true" @dragstart="pickupTask($event, $taskIndex, $boardIndex )" 
+                  @click="goToTask(task)">
                 <span class="w-full flex-no-shrink font-bold">
                   {{ task.t_titel }}
                   {{ task.t_id }}
@@ -105,6 +112,19 @@ export default {
         })
       })
  //     this.$router.push({ name: 'Board'})
+    },
+    pickupTask (e, taskIndex, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('task-index', taskIndex)
+      e.dataTransfer.setData('from-column-index', fromColumnIndex)
+      console.log(e.dataTransfer)
+    },
+    moveTask (e, toTasks) {
+      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+      const fromTasks = this.boardStore.columns[0].jsonb_build_object.board[fromColumnIndex].jsonb_agg
+      const taskIndex = e.dataTransfer.getData('task-index')
+      console.log('aap' + fromColumnIndex + fromTasks[taskIndex].omschrijving)
     }
     
   }

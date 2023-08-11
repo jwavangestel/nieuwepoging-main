@@ -66,14 +66,14 @@ export const useBoardStore = defineStore('BoardStore', {
         },
 
         updateTaak(newTaak) {
-//            console.log(newTaak.sc_id + ' ' + newTaak.titel + newTaak.titel + " cent")
+            console.log(newTaak.sc_id + ' ' + newTaak.titel + newTaak.titel + " cent")
             return EventService.updateTaak(newTaak)
             .then(response => {
 //                console.log('eend')
                 this.taak=response.data
             })
             .catch(error => {
-                console.log('duim')
+//                console.log('duim')
                 throw error
             })            
         },
