@@ -12,7 +12,7 @@ const apiClient = axios.create({
 
 export default {
   async getColumns() {
-    return await apiClient.get('/board')
+    return await apiClient.get('/board3')
   },
   getTaak(id) {
     return apiClient.get('/taak/' + id)

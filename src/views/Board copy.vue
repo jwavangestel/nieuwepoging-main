@@ -13,15 +13,15 @@
               {{ board.description }}
             </div>
             <div class="list-reset">
-              <div class="task" v-for="(taak, $taakIndex) of board.jsonb_agg" :key="$taakIndex" 
+              <div class="task" v-for="(taak, $taakIndexIndex) of board.jsonb_agg" :key="$taakIndex" 
                   draggable="true" @dragstart="pickupTask($event, $taakIndex, $boardIndex )" 
                   @click="goToTask(task)">
                 <span class="w-full flex-no-shrink font-bold">
-                  {{ taak.taken[0].t_titel }}
-                  {{ taak.taken[0].t_id }}
+                  {{ takk.t_titel }}
+                  {{ takk.t_id }}
                 </span>
-                <p v-if="taak.taken[0].omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
-                  {{ taak.taken[0].omschrijving }}
+                <p v-if="task.omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
+                  {{ taak.omschrijving }}
                 </p>
               </div>
               <input type="text"  value='' class="block p2 w-full bg-transparent" placeholder="+ Enter new task" @keyup.enter="createTask($event, board.sc_id, value)">
@@ -124,7 +124,7 @@ export default {
       const fromColumnIndex = e.dataTransfer.getData('from-column-index')
       const fromTasks = this.boardStore.columns[0].jsonb_build_object.board[fromColumnIndex].jsonb_agg
       const taskIndex = e.dataTransfer.getData('task-index')
-      console.log('aap' + fromColumnIndex + fromTasks[taskIndex].omschrijving + toTasks[0].omschrijving)
+//      console.log('aap' + fromColumnIndex + fromTasks[taskIndex].omschrijving + toTasks[0].omschrijving)
 
       this.boardStore.moveTask(
         fromTasks,

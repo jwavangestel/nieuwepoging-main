@@ -31,7 +31,7 @@ export const useBoardStore = defineStore('BoardStore', {
     },
     actions: {
         fetchColumns() {
-            console.log("quincy")
+//            console.log("quincy")
             return EventService.getColumns()
             .then(response => {
 //                console.log("poes")
@@ -77,6 +77,11 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })            
         },
+        moveTask(fromTasks, toTasks, taskIndex ) {
+//            console.log('beer' + fromTasks[0])
+            const taskToMove = fromTasks.splice(taskIndex, 1)[0]
+            toTasks.push(taskToMove)
+        }
 
  
     } 
