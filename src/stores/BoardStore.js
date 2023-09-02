@@ -78,9 +78,14 @@ export const useBoardStore = defineStore('BoardStore', {
             })            
         },
         moveTask(fromTasks, toTasks, taskIndex ) {
-//            console.log('beer' + fromTasks[0])
+            console.log('beer' + fromTasks + ' ' + taskIndex)
             const taskToMove = fromTasks.splice(taskIndex, 1)[0]
             toTasks.push(taskToMove)
+        },
+        moveColumn(fromColumnIndex, toColumnIndex ) {
+            const columnList = useBoardStore._pinia.state.value.BoardStore.columns[0].jsonb_build_object.board
+            const columnToMove = columnList.splice(fromColumnIndex, 1)[0]
+            columnList.splice(toColumnIndex, 0, columnToMove)
         }
 
  
