@@ -11,7 +11,8 @@ export const useBoardStore = defineStore('BoardStore', {
                 sc_id: '',
                 titel: '',
                 omschrijving: ''
-            }
+            },
+            newColumnName: ''
 
         }
     },
@@ -77,10 +78,15 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })            
         },
-        moveTask(fromTasks, toTasks, taskIndex ) {
-            console.log('beer' + fromTasks + ' ' + taskIndex)
-            const taskToMove = fromTasks.splice(taskIndex, 1)[0]
-            toTasks.push(taskToMove)
+        moveTask(fromTasks, fromTaskIndex, toTasks, toTaskIndex ) {
+//            console.log('beer' + fromTasks + ' ' + taskIndex)
+            const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
+            toTasks.splice(toTaskIndex, 0, taskToMove)
+        },
+        addKolom( newColomnName ) {  
+            console.log('lang')     
+            const columnList = useBoardStore._pinia.state.value.BoardStore.columns[0].jsonb_build_object.board
+            columnList.push(newColomnName)           
         },
         moveColumn(fromColumnIndex, toColumnIndex ) {
             const columnList = useBoardStore._pinia.state.value.BoardStore.columns[0].jsonb_build_object.board
