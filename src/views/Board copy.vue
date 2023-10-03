@@ -4,29 +4,42 @@
       <div v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
         <div class="flex flex-row items-start">
           <div   class='column' v-for="(board, $boardIndex) of column.jsonb_build_object.board" :key="$boardIndex" 
-                  @drop="moveTask($event, board.jsonb_agg)"
+              draggable="true"  
+                  @dragstart.self="pickupColumn($event, $boardIndex)" 
+              @drop="moveTaskOrColumn($event, board.jsonb_agg, $boardIndex)"
                   @dragover.prevent
                   @dragenter.prevent
           > 
-
-            <div class="flex items-center mb-2 font-bold"  >
-              {{ board.description }}
-            </div>
-            <div class="list-reset">
-              <div class="task" v-for="(taak, $taakIndexIndex) of board.jsonb_agg" :key="$taakIndex" 
-                  draggable="true" @dragstart="pickupTask($event, $taakIndex, $boardIndex )" 
-                  @click="goToTask(task)">
-                <span class="w-full flex-no-shrink font-bold">
-                  {{ takk.t_titel }}
-                  {{ takk.t_id }}
-                </span>
-                <p v-if="task.omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
-                  {{ taak.omschrijving }}
-                </p>
+              <div class="flex items-center mb-2 font-bold"  >
+                {{ board.description }}
               </div>
+              <div class="list-reset">
+                <div class="task" v-for="(taak, $taakIndex) of board.jsonb_agg" :key="$taakIndex" 
+                    draggable="true" 
+                      @dragstart="pickupTask($event, $taakIndex, $boardIndex, $boardIndex )"            @click="goToTask(taak)"
+                        @dragover.prevent
+                        @dragenter.prevent
+                        @drop.stop="moveTaskOrColumn($event, board.jsonb_agg, $boardIndex, $taakIndex)"
+                >
+                  <span class="w-full flex-no-shrink font-bold">
+                    {{ taak.taken[0].t_titel }}
+                    {{ taak.taken[0].t_id }}
+                  </span>
+                  <p v-if="taak.taken[0].omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
+                    {{ taak.taken[0].omschrijving }}
+                  </p>
+                </div>
               <input type="text"  value='' class="block p2 w-full bg-transparent" placeholder="+ Enter new task" @keyup.enter="createTask($event, board.sc_id, value)">
             </div>
-          </div>         
+          </div>  
+          <div class="column-flex">
+            <input type="text" 
+            value=''
+            class="p-2 mr-2 flex-grow"
+            placeholder="+ New Column Name"
+            @keyup.enter="createColumn($event, value)"
+            >
+          </div>     
         </div>
       </div>
       <div  class="task-bg" v-if="isTaskOpen" >
@@ -44,7 +57,6 @@ export default {
   setup() {
     const boardStore = useBoardStore()
 
-
     return{
       boardStore
     }
@@ -61,11 +73,23 @@ export default {
         name: 'ErrorDisplay',
         params: { error: error}
       })
+    }),
+    this.boardStore.fetchKolomPositie().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    }),
+    this.boardStore.fetchTaakPositie().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
     })
 
   },
   async onload() {
-    console.log('Noot')
+//    console.log('Noot')
     await this.boardStore.fetchColumns().catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
@@ -76,16 +100,16 @@ export default {
  
 
   methods: {
-    goToTask (task) {
+    goToTask (taak) {
 //      console.log("wees")
-      this.boardStore.fetchTaak(task.t_id).catch(error=> {
+      this.boardStore.fetchTaak(taak.taken[0].t_id).catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
       })
     })
 //      console.log("vuur")
-      this.$router.push({ name: 'task', params: { id: task.t_id}})
+      this.$router.push({ name: 'task', params: { id: taak.taken[0].t_id}})
     },
     close () {
       this.$router.push({ name: 'Board' })
@@ -111,25 +135,70 @@ export default {
         params: { error: error}
         })
       })
- //     this.$router.push({ name: 'Board'})
+    },
+    createColumn(e) {
+      console.log('column add')
+      this.boardStore.newColumn.description = e.target.value
+      console.log(this.boardStore.newColumn)
+
+      this.boardStore.addKolom(this.boardStore.newColumn)
+//      .catch(error=> {
+//        this.$router.push({
+//          name: 'ErrorDisplay',
+//          params: { error: error}
+//        })
+//      })
+//      this.boardStore.newColumn.sc_id = ''
+//      this.boardStore.newColumn.description = ''
+      e.target.value = ''
+
+    },
+    pickupColumn (e, fromColumnIndex) {
+      e.dataTransfer.effectAllowed = 'move'
+      e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('from-column-index', fromColumnIndex)
+      e.dataTransfer.setData('type', 'column')
+//    console.log(e.dataTransfer)
     },
     pickupTask (e, taskIndex, fromColumnIndex) {
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
-      e.dataTransfer.setData('task-index', taskIndex)
+
+      e.dataTransfer.setData('from-task-index', taskIndex)
       e.dataTransfer.setData('from-column-index', fromColumnIndex)
-      console.log(e.dataTransfer)
+      e.dataTransfer.setData('type', 'taak')
+
+ //     console.log(e.dataTransfer)
     },
-    moveTask (e, toTasks) {
+    moveTaskOrColumn (e, toTasks, toColumnIndex, toTaskIndex) {
+      const type = e.dataTransfer.getData('type')
+      if (type === 'taak') {
+        this.moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+      } else {
+        this.moveColumn(e, toColumnIndex)
+      }
+
+    },
+    moveTask (e, toTasks, toTaskIndex) {
       const fromColumnIndex = e.dataTransfer.getData('from-column-index')
       const fromTasks = this.boardStore.columns[0].jsonb_build_object.board[fromColumnIndex].jsonb_agg
-      const taskIndex = e.dataTransfer.getData('task-index')
-//      console.log('aap' + fromColumnIndex + fromTasks[taskIndex].omschrijving + toTasks[0].omschrijving)
+      const fromTaskIndex = e.dataTransfer.getData('from-task-index')
+//      console.log('aap' + fromColumnIndex + taskIndex + fromTasks[taskIndex].taken[0].omschrijving + toTasks)
+//      console.log(e)
 
       this.boardStore.moveTask(
         fromTasks,
+        fromTaskIndex,
         toTasks,
-        taskIndex
+        toTaskIndex
+      ) 
+    },
+    moveColumn (e, toColumnIndex) {
+      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
+
+      this.boardStore.moveColumn(
+        fromColumnIndex,
+        toColumnIndex
       ) 
     }
   }

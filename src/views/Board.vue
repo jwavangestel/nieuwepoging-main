@@ -73,6 +73,18 @@ export default {
         name: 'ErrorDisplay',
         params: { error: error}
       })
+    }),
+    this.boardStore.fetchKolomPositie().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    }),
+    this.boardStore.fetchTaakPositie().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
     })
 
   },
@@ -126,11 +138,20 @@ export default {
     },
     createColumn(e) {
       console.log('column add')
-      this.boardStore.newColumnName = e.target.value
-      console.log(this.boardStore.newColumnName)
+      this.boardStore.newColumn.description = e.target.value
+      console.log(this.boardStore.newColumn)
 
-      this.boardStore.addKolom(this.boardStore.newColumnName)
-      this.newColumnName = ''
+      this.boardStore.addKolom(this.boardStore.newColumn)
+//      .catch(error=> {
+//        this.$router.push({
+//          name: 'ErrorDisplay',
+//          params: { error: error}
+//        })
+//      })
+//      this.boardStore.newColumn.sc_id = ''
+//      this.boardStore.newColumn.description = ''
+      e.target.value = ''
+
     },
     pickupColumn (e, fromColumnIndex) {
       e.dataTransfer.effectAllowed = 'move'

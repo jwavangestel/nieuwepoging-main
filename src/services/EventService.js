@@ -14,8 +14,14 @@ export default {
   async getColumns() {
     return await apiClient.get('/board3')
   },
+  async getColumnsPositie() {
+    return await apiClient.get('/kolompositie')
+  },
   getTaak(id) {
     return apiClient.get('/taak/' + id)
+  },
+  async getTaakPositie() {
+    return await apiClient.get('/taakpositie')
   },
   addTaak(nieuweTaak) {
 //    console.log('fuut' + nieuweTaak.sc_id + nieuweTaak.titel)

@@ -12,8 +12,13 @@ export const useBoardStore = defineStore('BoardStore', {
                 titel: '',
                 omschrijving: ''
             },
-            newColumnName: ''
-
+            newColumn: {
+                sc_id: '',
+                description: '',
+                col_pos: ''
+            },
+            kolomPositie: [],
+            taakPositie: []
         }
     },
     getters: {
@@ -42,6 +47,16 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })
         },
+
+        fetchKolomPositie() {
+            return EventService.getColumnsPositie()
+            .then(response => {
+                this.kolomPositie=response.data
+            })
+            .catch(error => {
+                throw error
+            })
+        },
         
         fetchTaak(t_id) {
             return EventService.getTaak(t_id)
@@ -51,6 +66,16 @@ export const useBoardStore = defineStore('BoardStore', {
             .catch(error => {
                 throw error
             })            
+        },
+
+        fetchTaakPositie() {
+            return EventService.getTaakPositie()
+            .then(response => {
+                this.taakPositie=response.data
+            })
+            .catch(error => {
+                throw error
+            })
         },
 
         addTaak(newTaak) {
@@ -83,10 +108,12 @@ export const useBoardStore = defineStore('BoardStore', {
             const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
             toTasks.splice(toTaskIndex, 0, taskToMove)
         },
-        addKolom( newColomnName ) {  
+        addKolom( newColumn ) {  
             console.log('lang')     
             const columnList = useBoardStore._pinia.state.value.BoardStore.columns[0].jsonb_build_object.board
-            columnList.push(newColomnName)           
+//            newColumn.col_pos = columnList.lenght + 1
+            console.log(columnList)
+            columnList.push(newColumn)           
         },
         moveColumn(fromColumnIndex, toColumnIndex ) {
             const columnList = useBoardStore._pinia.state.value.BoardStore.columns[0].jsonb_build_object.board
