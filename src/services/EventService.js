@@ -12,10 +12,13 @@ const apiClient = axios.create({
 
 export default {
   async getColumns() {
-    return await apiClient.get('/board3')
+    return await apiClient.get('/status')
   },
   async getColumnsPositie() {
     return await apiClient.get('/kolompositie')
+  },
+  async getTaken() {
+    return await apiClient.get('/taken')
   },
   getTaak(id) {
     return apiClient.get('/taak/' + id)

@@ -5,6 +5,7 @@ export const useBoardStore = defineStore('BoardStore', {
     state () {
         return {
             columns: [],
+            taken: [],
             taak: {},
             newTaak: {
                 task_id: '',
@@ -57,6 +58,17 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })
         },
+        fetchTaken() {
+            //            console.log("quincy")
+                        return EventService.getTaken()
+                        .then(response => {
+            //                console.log("poes")
+                            this.taken=response.data
+                        })
+                        .catch(error => {
+                            throw error
+                        })
+                    },
         
         fetchTaak(t_id) {
             return EventService.getTaak(t_id)
@@ -92,7 +104,6 @@ export const useBoardStore = defineStore('BoardStore', {
         },
 
         updateTaak(newTaak) {
-            console.log(newTaak.sc_id + ' ' + newTaak.titel + newTaak.titel + " cent")
             return EventService.updateTaak(newTaak)
             .then(response => {
 //                console.log('eend')

@@ -3,7 +3,7 @@
     <div class="task-view">
       <div class="flex flex-col flex-grow items-start justify-between px-4">
         <div class="form-container w-full">
-          <form @submit.prevent="close">
+          <form>
             <div>
               <input class="p-2 w-full mr-2 block text-xl font-bold" type="text" v-model="boardStore.taak[0].titel">
             </div>
@@ -14,7 +14,10 @@
               <textarea class="relative bg-transparent px-2 border mt-2  w-full h-64 border-none leading-normal" v-model="boardStore.taak[0].omschrijving"></textarea>          
             </div>
 
-              <button class="bg-white hover:bg-grey text-gray-800 font-semibold py-2 px-4 m-10 border border-gray-400 rounded shadow" type="submit"> 
+              <button class="bg-white hover:bg-grey text-gray-800 font-semibold py-2 px-4 m-10 border border-gray-400 rounded shadow" type="button" v-on:click="Close"> 
+                Cancel
+              </button>
+              <button class="bg-white hover:bg-grey text-gray-800 font-semibold py-2 px-4 m-10 border border-gray-400 rounded shadow" type="button" v-on:click="SaveAndClose"> 
                 Save and Close
               </button>
 
@@ -68,8 +71,8 @@ export default {
   },
 
   methods: {
-     close () {
-//      console.log("closed " + this.boardStore.taak[0].omschrijving)
+    SaveAndClose () {
+      console.log("closed " + this.boardStore.taak[0].omschrijving)
       this.boardStore.newTaak.task_id = this.boardStore.taak[0].task_id
       this.boardStore.newTaak.sc_id = this.boardStore.taak[0].sc_id
       this.boardStore.newTaak.titel = this.boardStore.taak[0].titel
@@ -80,27 +83,24 @@ export default {
       let beer = []
       let end = ''
       let y = 0
-//      console.log(this.boardStore.columns[0].jsonb_build_object.board.length)
-      for (let c = 0; c < this.boardStore.columns[0].jsonb_build_object.board.length; c++) {
-            beer = this.boardStore.columns[0].jsonb_build_object.board[c]
-//            console.log("length " + beer.jsonb_agg.length)
-            for (let i = 0; i < beer.jsonb_agg.length; i++) {
-//               console.log("pipo" + beer.jsonb_agg[i].t_id)
-               if(beer.jsonb_agg[i].t_id === this.boardStore.newTaak.task_id) {
-                colIndex = c
-                taskIndex = i
-//                console.log("Hoera! " + colIndex + ' ' + taskIndex)
+//      console.log(this.boardStore.taken.length)
+      for (let c = 0; c < this.boardStore.taken.length; c++) {
+//            console.log(c)
+               console.log("pipo" + this.boardStore.taken[c].task_id)
+               if(this.boardStore.taken[c].task_id === this.boardStore.newTaak.task_id) {
+//                colIndex = c
+//                taskIndex = i
+                console.log("Hoera! ")
+                this.boardStore.taken[c].titel = this.boardStore.newTaak.titel
+                this.boardStore.taken[c].omschrijving = this.boardStore.newTaak.omschrijving
+
+
+
                 { break }
-               }
+//               }
             }
        }
        
-
-  
-
-      this.boardStore.columns[0].jsonb_build_object.board[colIndex].jsonb_agg[taskIndex].omschrijving = this.boardStore.taak[0].omschrijving
- //     console.log('ruud2' + this.boardStore.columns[0].jsonb_build_object.board[colIndex].jsonb_agg[taskIndex].t_id)
- //     console.log('ruud3' + this.boardStore.columns[0].jsonb_build_object.board[colIndex].jsonb_agg[taskIndex].omschrijving)
 
        this.boardStore.updateTaak(this.boardStore.taak[0]).catch(error=> {
         this.$router.push({
@@ -120,6 +120,9 @@ export default {
  
     
 //    })
+    },
+    Close () {
+      this.$router.push({ name: 'Board' })
     }
   }
 }

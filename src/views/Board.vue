@@ -1,50 +1,48 @@
 <template>
     <div class="board">
+      <div class="flex flex-row items-start">
 
-      <div v-for="(column, $columnIdex) of boardStore.columns" :key="$columnIdex" > 
-        <div class="flex flex-row items-start">
-          <div   class='column' v-for="(board, $boardIndex) of column.jsonb_build_object.board" :key="$boardIndex" 
-              draggable="true"  
-                  @dragstart.self="pickupColumn($event, $boardIndex)" 
-              @drop="moveTaskOrColumn($event, board.jsonb_agg, $boardIndex)"
-                  @dragover.prevent
-                  @dragenter.prevent
-          > 
-              <div class="flex items-center mb-2 font-bold"  >
-                {{ board.description }}
+        <div  class='column' v-for="(columnPos, $columnPosIdex) of boardStore.kolomPositie[0].kolomPos" :key="$columnPosIdex" > 
+
+
+
+          <div   v-for="(column, $columnIndex) of boardStore.columns" :key="$column">
+            <div v-if="column.sc_id === columnPos">
+              <div class="flex items-center mb-2 font-bold" >
+                {{ column.description }}  
               </div>
-              <div class="list-reset">
-                <div class="task" v-for="(taak, $taakIndex) of board.jsonb_agg" :key="$taakIndex" 
-                    draggable="true" 
-                      @dragstart="pickupTask($event, $taakIndex, $boardIndex, $boardIndex )"            @click="goToTask(taak)"
-                        @dragover.prevent
-                        @dragenter.prevent
-                        @drop.stop="moveTaskOrColumn($event, board.jsonb_agg, $boardIndex, $taakIndex)"
-                >
-                  <span class="w-full flex-no-shrink font-bold">
-                    {{ taak.taken[0].t_titel }}
-                    {{ taak.taken[0].t_id }}
-                  </span>
-                  <p v-if="taak.taken[0].omschrijving"  class="w-full flex-no-shrink mt-1 test-sm">
-                    {{ taak.taken[0].omschrijving }}
-                  </p>
-                </div>
-              <input type="text"  value='' class="block p2 w-full bg-transparent" placeholder="+ Enter new task" @keyup.enter="createTask($event, board.sc_id, value)">
+              <div class="list-reset"  v-for="(taakPos, $taakPosIndex) of boardStore.taakPositie" :key="$taakPosIndex"> 
+   
+                <div  v-for="(taakPosP, $taakPosPIndex) of taakPos.positie" :key="$taakPosPIndex" > 
+  
+                  <div  v-for="(taakDetail, $taakDetailIndex) of boardStore.taken" :key="$taakDetailIndex" @click="goToTask(taakDetail)"> 
+                    <div  v-if="column.sc_id === taakDetail.sc_id ">
+                      <div class="task" v-if="taakPosP === taakDetail.task_id ">
+                        <span class="w-full flex-no-shrink font-bold">
+                    
+                        {{ taakDetail.titel }}
+                        </span>
+
+                        <p  class="w-full flex-no-shrink mt-1 test-sm" v-if="taakDetail.omschrijving != 'null'" >
+                            {{ taakDetail.omschrijving }}
+                        </p>  
+                      </div>
+                    </div>
+                  </div>
+                </div>  
+              </div>   
             </div>
-          </div>  
-          <div class="column-flex">
-            <input type="text" 
-            value=''
-            class="p-2 mr-2 flex-grow"
-            placeholder="+ New Column Name"
-            @keyup.enter="createColumn($event, value)"
-            >
-          </div>     
-        </div>
+
+          </div>
+
+        </div> 
       </div>
-      <div  class="task-bg" v-if="isTaskOpen" >
-        <router-view/>
+
+      <div  class="task-bg" v-if="isTaskOpen">
+          <router-view/>
       </div>
+
+
 
 
     </div>
@@ -80,6 +78,12 @@ export default {
         params: { error: error}
       })
     }),
+    this.boardStore.fetchTaken().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    }),
     this.boardStore.fetchTaakPositie().catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
@@ -101,15 +105,16 @@ export default {
 
   methods: {
     goToTask (taak) {
-//      console.log("wees")
-      this.boardStore.fetchTaak(taak.taken[0].t_id).catch(error=> {
+      console.log("wees")
+      console.log(taak.task_id)
+      this.boardStore.fetchTaak(taak.task_id).catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
         params: { error: error}
       })
     })
 //      console.log("vuur")
-      this.$router.push({ name: 'task', params: { id: taak.taken[0].t_id}})
+      this.$router.push({ name: 'task', params: { id: taak.task_id}})
     },
     close () {
       this.$router.push({ name: 'Board' })
