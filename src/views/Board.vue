@@ -31,6 +31,7 @@
                   </div>
                 </div>  
               </div>   
+              <input type="text"  value='' class="block p2 w-full bg-transparent" placeholder="+ Enter new task" @keyup.enter="createTask($event, column.sc_id, value)">
             </div>
 
           </div>
@@ -120,6 +121,7 @@ export default {
       this.$router.push({ name: 'Board' })
     },
     createTask(e, column) {
+      console.log("create taak" + e.target.value + column)
       this.boardStore.newTaak.sc_id = column
       this.boardStore.newTaak.titel = e.target.value
 //      console.log(this.boardStore.newTaak.sc_id, e.target.value)
@@ -130,6 +132,19 @@ export default {
           params: { error: error}
         })
       })
+      console.log(this.boardStore.taakPositie.length)
+        for( let t = 0; t < this.boardStore.taakPositie.length; t++) {
+            console.log(column + ' ' + this.boardStore.taakPositie[t].sc_id)
+            if(column == this.boardStore.taakPositie[t].sc_id) {
+              console.log('raak')
+              const taskpos = this.boardStore.taakPositie[t].positie
+              taskpos.splice(this.boardStore.taakPositie.length, 0, columnToMove)
+            } else {
+              console.log(t)
+            }
+        }
+
+     
       this.boardStore.newTaak.sc_id = ''
       this.boardStore.newTaak.titel = ''
       e.target.value = ''
