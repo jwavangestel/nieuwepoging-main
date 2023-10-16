@@ -132,13 +132,20 @@ export default {
           params: { error: error}
         })
       })
+      this.boardStore.fetchLaatsteTaakId().catch(error=> {
+        this.$router.push({
+          name: 'ErrorDisplay',
+          params: { error: error}
+        })  
+      })
+      console.log('LT' + this.boardStore.latestTaakId[0].max)
       console.log(this.boardStore.taakPositie.length)
         for( let t = 0; t < this.boardStore.taakPositie.length; t++) {
             console.log(column + ' ' + this.boardStore.taakPositie[t].sc_id)
             if(column == this.boardStore.taakPositie[t].sc_id) {
               console.log('raak')
               const taskpos = this.boardStore.taakPositie[t].positie
-              taskpos.splice(this.boardStore.taakPositie.length, 0, columnToMove)
+              taskpos.splice(this.boardStore.taakPositie.length, 0, this.boardStore.latestTaakId[0].max)
             } else {
               console.log(t)
             }

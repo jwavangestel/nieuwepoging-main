@@ -20,6 +20,9 @@ export default {
   async getTaken() {
     return await apiClient.get('/taken')
   },
+  async getlatestTaakId() {
+    return await apiClient.get('/latestTaskId')
+  },
   getTaak(id) {
     return apiClient.get('/taak/' + id)
   },

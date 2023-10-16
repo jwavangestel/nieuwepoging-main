@@ -19,7 +19,8 @@ export const useBoardStore = defineStore('BoardStore', {
                 col_pos: ''
             },
             kolomPositie: [],
-            taakPositie: []
+            taakPositie: [],
+            latestTaakId: []
         }
     },
     getters: {
@@ -84,6 +85,15 @@ export const useBoardStore = defineStore('BoardStore', {
             return EventService.getTaakPositie()
             .then(response => {
                 this.taakPositie=response.data
+            })
+            .catch(error => {
+                throw error
+            })
+        },
+        fetchLaatsteTaakId() {
+            return EventService.getlatestTaakId()
+            .then(response => {
+                this.latestTaakId=response.data
             })
             .catch(error => {
                 throw error
