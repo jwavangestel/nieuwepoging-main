@@ -52,14 +52,25 @@
 
 <script>
 import { useBoardStore } from '../stores/BoardStore'
+import { useAsyncQueue } from '@vueuse/core'
 
 export default {
   setup() {
     const boardStore = useBoardStore()
+    const n = 0
+    const getPromise = new Promise
+    Promise => {
+      setTimeout(() => {
+        resolve(2);
+      }, 2000)
+    }
 
     return{
-      boardStore
-    }
+      boardStore,
+      n,
+      Promise
+      }
+    
   },
   computed: {
     isTaskOpen () {

@@ -124,6 +124,18 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })            
         },
+        updateTaakPositie(newTaakPos) {
+            console.log('Duimen')
+            return EventService.updateTaakPositie(newTaakPos)
+            .then(response => {
+                console.log('eend')
+                this.taak=response.data
+            })
+            .catch(error => {
+//                console.log('duim')
+                throw error
+            })            
+        },
         moveTask(fromTasks, fromTaskIndex, toTasks, toTaskIndex ) {
 //            console.log('beer' + fromTasks + ' ' + taskIndex)
             const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]

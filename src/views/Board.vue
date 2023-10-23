@@ -50,16 +50,25 @@
 </template>
 
 <script>
+import { setMapStoreSuffix } from 'pinia'
 import { useBoardStore } from '../stores/BoardStore'
+import { useAsyncQueue } from '@vueuse/core'
 
 export default {
-  setup() {
+setup() {
+
+ 
     const boardStore = useBoardStore()
+    const n = 0
+
+
 
     return{
-      boardStore
+      boardStore,
+      n
     }
   },
+ 
   computed: {
     isTaskOpen () {
       return this.$route.name === 'task'
@@ -90,6 +99,7 @@ export default {
         name: 'ErrorDisplay',
         params: { error: error}
       })
+
     })
 
   },
@@ -100,7 +110,15 @@ export default {
         name: 'ErrorDisplay',
         params: { error: error}
       })
-    })
+    }),
+    this.boardStore.fetchLaatsteTaakId().catch(error=> {
+        this.$router.push({
+          name: 'ErrorDisplay',
+          params: { error: error}
+ 
+        }) 
+
+      })
   },
  
 
@@ -120,37 +138,63 @@ export default {
     close () {
       this.$router.push({ name: 'Board' })
     },
-    createTask(e, column) {
+    async createTask(e, column) {
+
       console.log("create taak" + e.target.value + column)
       this.boardStore.newTaak.sc_id = column
       this.boardStore.newTaak.titel = e.target.value
 //      console.log(this.boardStore.newTaak.sc_id, e.target.value)
 //      console.log(this.boardStore.newTaak.sc_id + this.boardStore.newTaak.titel + 'cent')
-      this.boardStore.addTaak(this.boardStore.newTaak).catch(error=> {
+      await this.boardStore.addTaak(this.boardStore.newTaak).catch(error=> {
         this.$router.push({
           name: 'ErrorDisplay',
           params: { error: error}
         })
       })
-      this.boardStore.fetchLaatsteTaakId().catch(error=> {
+ 
+      console.log('leuk')
+       await this.boardStore.fetchLaatsteTaakId().catch(error=> {
         this.$router.push({
           name: 'ErrorDisplay',
           params: { error: error}
-        })  
+ 
+        }) 
+ 
       })
-      console.log('LT' + this.boardStore.latestTaakId[0].max)
+      console.log('Zus '+ this.boardStore.latestTaakId[0].max)  
+      console.log('Mies '+ this.boardStore.latestTaakId[0].max) 
+
+      console.log(this.boardStore.taakPositie)
+      console.log('LT' + this.boardStore.latestTaakId[0].max + 1)
       console.log(this.boardStore.taakPositie.length)
         for( let t = 0; t < this.boardStore.taakPositie.length; t++) {
             console.log(column + ' ' + this.boardStore.taakPositie[t].sc_id)
             if(column == this.boardStore.taakPositie[t].sc_id) {
               console.log('raak')
               const taskpos = this.boardStore.taakPositie[t].positie
-              taskpos.splice(this.boardStore.taakPositie.length, 0, this.boardStore.latestTaakId[0].max)
+              let n = 0
+              taskpos.splice(taskpos.length, 0, this.boardStore.latestTaakId[n].max)
+              console.log( this.boardStore.taakPositie[t])
+              this.boardStore.updateTaakPositie(this.boardStore.taakPositie[t]).catch(error=> {
+                this.$router.push({
+                  name: 'ErrorDisplay',
+                  params: { error: error}
+                })  
+              })
             } else {
               console.log(t)
             }
         }
 
+        console.log('leuk')
+       await this.boardStore.fetchTaken().catch(error=> {
+        this.$router.push({
+          name: 'ErrorDisplay',
+          params: { error: error}
+ 
+        }) 
+ 
+      })
      
       this.boardStore.newTaak.sc_id = ''
       this.boardStore.newTaak.titel = ''
