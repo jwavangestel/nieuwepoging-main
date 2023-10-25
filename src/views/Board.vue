@@ -1,18 +1,19 @@
 <template>
     <div class="board">
-      <div class="flex flex-row items-start">
+ 
 
 
 
 
-        <div  class='column' v-for="(columnPos, $columnPosIdex) of boardStore.kolomPositie[0].kolomPos" :key="$columnPosIdex" > 
-
+        <div  v-for="(columnPosH, $columnPosHIdex) of boardStore.kolomPositie" :key="$columnPosHIdex" >     
+          <div class="flex flex-row items-start">
+                  <div  class='column' v-for="(columnPos, $columnPosIdex) of columnPosH.kolomPos" :key="$columnPosIdex" > 
             <div   v-for="(column, $columnIndex) of boardStore.columns" :key="$columnIndex">
               <div v-if="column.sc_id === columnPos">
                 <div class="flex items-center mb-2 font-bold" >
                   {{ column.description }}  
                 </div>
-                <div class="list-reset"  v-for="(taakPos, $taakPosIndex) of boardStore.taakPositie" :key="$taakPosIndex"> 
+                <div  class="list-reset" v-for="(taakPos, $taakPosIndex) of boardStore.taakPositie" :key="$taakPosIndex"> 
     
                   <div  v-for="(taakPosP, $taakPosPIndex) of taakPos.positie" :key="$taakPosPIndex" > 
     
@@ -42,7 +43,7 @@
             </div>
 
             </div>
-
+          </div>
         </div> 
       </div>
 
