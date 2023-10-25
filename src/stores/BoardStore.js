@@ -136,10 +136,33 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })            
         },
-        moveTask(fromTasks, fromTaskIndex, toTasks, toTaskIndex ) {
-//            console.log('beer' + fromTasks + ' ' + taskIndex)
-            const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
-            toTasks.splice(toTaskIndex, 0, taskToMove)
+        moveTask( move_task_id, from_sc_id, from_taskPos_Index, fromTaskIndex, to_sc_id, to_taakPos_Index, toTaskIndex ) {
+//        Update sc-id in task 
+            console.log('update set sc-id: ' + to_sc_id  + ' in task: '   + move_task_id)
+
+//        Delete task-id from current taskposition in current sc_id
+            console.log('taak-id = ' + move_task_id +    
+            ' in kolom_id=' + from_sc_id + 
+            ' en Taakvolgorde Index=' + from_taskPos_Index + 
+            ' wordt verwijderd van postitie ' + fromTaskIndex + '+1 uit deze kolom')
+            const posList = useBoardStore._pinia.state.value.BoardStore.taakPositie[from_taskPos_Index].positie
+            console.log('old position array before remove task: ' + posList )
+            const task_id_delete = posList.splice(fromTaskIndex, 1)[0]
+            console.log('old position array after remove taak:' + useBoardStore._pinia.state.value.BoardStore.taakPositie[from_taskPos_Index].positie)
+            console.log('old position array after remove taak:' + task_id_delete)
+
+//        Add task_id to taskposion of receiving sc_id 
+            console.log('taak-id = ' + move_task_id +    
+            ' wordt toegevoegd aan kolom_id=' + to_sc_id + 
+            ' en Taakvolgorde Index =' + to_taakPos_Index + 
+            '  postitie ' + toTaskIndex + '+1 uit deze kolom')
+            const posListN = useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie
+            console.log('new position array before adding task: ' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie )
+            const task_id_add = posListN.splice(toTaskIndex, 0, move_task_id)
+            console.log('new position array after adding taak:' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie)
+
+//            const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
+//            toTasks.splice(toTaskIndex, 0, taskToMove)
         },
         addKolom( newColumn ) {  
             console.log('lang')     

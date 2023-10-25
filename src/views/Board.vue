@@ -2,39 +2,46 @@
     <div class="board">
       <div class="flex flex-row items-start">
 
+
+
+
         <div  class='column' v-for="(columnPos, $columnPosIdex) of boardStore.kolomPositie[0].kolomPos" :key="$columnPosIdex" > 
 
+            <div   v-for="(column, $columnIndex) of boardStore.columns" :key="$columnIndex">
+              <div v-if="column.sc_id === columnPos">
+                <div class="flex items-center mb-2 font-bold" >
+                  {{ column.description }}  
+                </div>
+                <div class="list-reset"  v-for="(taakPos, $taakPosIndex) of boardStore.taakPositie" :key="$taakPosIndex"> 
+    
+                  <div  v-for="(taakPosP, $taakPosPIndex) of taakPos.positie" :key="$taakPosPIndex" > 
+    
+                    <div  v-for="(taakDetail, $taakDetailIndex) of boardStore.taken" :key="$taakDetailIndex" @click="goToTask(taakDetail)"> 
+                      <div  v-if="column.sc_id === taakDetail.sc_id ">
+                        <div class="task" v-if="taakPosP === taakDetail.task_id" 
+                          draggable="true"
+                          @dragstart="pickupTask($event, columnPos, $taakPosIndex, taakDetail, $taakPosPIndex )"            
+                          @dragover.prevent
+                          @dragenter.prevent
+                          @drop.stop="moveTask($event,  columnPos, $taakPosIndex, $taakPosPIndex)"                         
+                          >
+                          <span class="w-full flex-no-shrink font-bold">
+                      
+                          {{ taakDetail.titel }}
+                          </span>
 
-
-          <div   v-for="(column, $columnIndex) of boardStore.columns" :key="$column">
-            <div v-if="column.sc_id === columnPos">
-              <div class="flex items-center mb-2 font-bold" >
-                {{ column.description }}  
-              </div>
-              <div class="list-reset"  v-for="(taakPos, $taakPosIndex) of boardStore.taakPositie" :key="$taakPosIndex"> 
-   
-                <div  v-for="(taakPosP, $taakPosPIndex) of taakPos.positie" :key="$taakPosPIndex" > 
-  
-                  <div  v-for="(taakDetail, $taakDetailIndex) of boardStore.taken" :key="$taakDetailIndex" @click="goToTask(taakDetail)"> 
-                    <div  v-if="column.sc_id === taakDetail.sc_id ">
-                      <div class="task" v-if="taakPosP === taakDetail.task_id ">
-                        <span class="w-full flex-no-shrink font-bold">
-                    
-                        {{ taakDetail.titel }}
-                        </span>
-
-                        <p  class="w-full flex-no-shrink mt-1 test-sm" v-if="taakDetail.omschrijving != 'null'" >
-                            {{ taakDetail.omschrijving }}
-                        </p>  
+                          <p  class="w-full flex-no-shrink mt-1 test-sm" v-if="taakDetail.omschrijving != 'null'" >
+                              {{ taakDetail.omschrijving }}
+                          </p>  
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>  
-              </div>   
+                  </div>  
+                </div>   
               <input type="text"  value='' class="block p2 w-full bg-transparent" placeholder="+ Enter new task" @keyup.enter="createTask($event, column.sc_id, value)">
             </div>
 
-          </div>
+            </div>
 
         </div> 
       </div>
@@ -152,7 +159,7 @@ setup() {
         })
       })
  
-      console.log('leuk')
+//      console.log('leuk')
        await this.boardStore.fetchLaatsteTaakId().catch(error=> {
         this.$router.push({
           name: 'ErrorDisplay',
@@ -161,20 +168,20 @@ setup() {
         }) 
  
       })
-      console.log('Zus '+ this.boardStore.latestTaakId[0].max)  
-      console.log('Mies '+ this.boardStore.latestTaakId[0].max) 
 
-      console.log(this.boardStore.taakPositie)
-      console.log('LT' + this.boardStore.latestTaakId[0].max + 1)
-      console.log(this.boardStore.taakPositie.length)
+//      console.log('Mies '+ this.boardStore.latestTaakId[0].max) 
+
+//      console.log(this.boardStore.taakPositie)
+//      console.log('LT' + this.boardStore.latestTaakId[0].max + 1)
+//      console.log(this.boardStore.taakPositie.length)
         for( let t = 0; t < this.boardStore.taakPositie.length; t++) {
-            console.log(column + ' ' + this.boardStore.taakPositie[t].sc_id)
+//            console.log(column + ' ' + this.boardStore.taakPositie[t].sc_id)
             if(column == this.boardStore.taakPositie[t].sc_id) {
-              console.log('raak')
+//              console.log('raak')
               const taskpos = this.boardStore.taakPositie[t].positie
               let n = 0
               taskpos.splice(taskpos.length, 0, this.boardStore.latestTaakId[n].max)
-              console.log( this.boardStore.taakPositie[t])
+//              console.log( this.boardStore.taakPositie[t])
               this.boardStore.updateTaakPositie(this.boardStore.taakPositie[t]).catch(error=> {
                 this.$router.push({
                   name: 'ErrorDisplay',
@@ -186,7 +193,7 @@ setup() {
             }
         }
 
-        console.log('leuk')
+//        console.log('leuk')
        await this.boardStore.fetchTaken().catch(error=> {
         this.$router.push({
           name: 'ErrorDisplay',
@@ -231,17 +238,21 @@ setup() {
       e.dataTransfer.setData('type', 'column')
 //    console.log(e.dataTransfer)
     },
-    pickupTask (e, taskIndex, fromColumnIndex) {
+    pickupTask (e, columnPos, taakPosIndex, taakDetail, taakPosPIndex) {
+      console.log('from_sc_id=' + columnPos + 'TaskPos_Index=' + taakPosIndex + 'Task_id =' + taakDetail.task_id +  ' from plaats in array = ' + taakPosPIndex)
+
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
 
-      e.dataTransfer.setData('from-task-index', taskIndex)
-      e.dataTransfer.setData('from-column-index', fromColumnIndex)
+      e.dataTransfer.setData('from_taskPos_Index', taakPosIndex)
+      e.dataTransfer.setData('task_id', taakDetail.task_id)
+      e.dataTransfer.setData('from_task_index', taakPosPIndex)
+      e.dataTransfer.setData('from_sc_id', columnPos)
       e.dataTransfer.setData('type', 'taak')
 
  //     console.log(e.dataTransfer)
     },
-    moveTaskOrColumn (e, toTasks, toColumnIndex, toTaskIndex) {
+    moveTaskOrColumn (e, columnPos, taakPos, $taakPosPIndex) {
       const type = e.dataTransfer.getData('type')
       if (type === 'taak') {
         this.moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
@@ -250,17 +261,28 @@ setup() {
       }
 
     },
-    moveTask (e, toTasks, toTaskIndex) {
-      const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-      const fromTasks = this.boardStore.columns[0].jsonb_build_object.board[fromColumnIndex].jsonb_agg
-      const fromTaskIndex = e.dataTransfer.getData('from-task-index')
-//      console.log('aap' + fromColumnIndex + taskIndex + fromTasks[taskIndex].taken[0].omschrijving + toTasks)
+    moveTask (e, to_sc_id, taakPosIndex, toTaskIndex) {
+      const from_taskPos_Index = e.dataTransfer.getData('from_taskPos_Index')
+      const move_task_id = e.dataTransfer.getData('task_id')
+      const fromTaskIndex = e.dataTransfer.getData('from_task_index')
+      const from_sc_id = e.dataTransfer.getData('from_sc_id')
+      console.log('taak-id = ' + move_task_id +    
+                  ' in kolom_id=' + from_sc_id + 
+                  ' en Taakvolgorde Index= ' + from_taskPos_Index + 
+                  ' wordt verwijderd van postitie ' + fromTaskIndex + '+1 uit deze kolom')
+      console.log('en wordt toegevoed in kolom_id='+ to_sc_id + 
+                  ' en taakvolgorde Index= ' + taakPosIndex + 
+                  ' op postie ' + toTaskIndex + '+1')
 //      console.log(e)
 
       this.boardStore.moveTask(
-        fromTasks,
+        move_task_id,
+        from_sc_id,
+        from_taskPos_Index,
         fromTaskIndex,
-        toTasks,
+//      naar
+        to_sc_id,
+        taakPosIndex,
         toTaskIndex
       ) 
     },
