@@ -125,7 +125,7 @@ export const useBoardStore = defineStore('BoardStore', {
             })            
         },
         updateTaakPositie(newTaakPos) {
-            console.log('Duimen')
+//            console.log('Duimen')
             return EventService.updateTaakPositie(newTaakPos)
             .then(response => {
                 console.log('eend')
@@ -136,30 +136,61 @@ export const useBoardStore = defineStore('BoardStore', {
                 throw error
             })            
         },
-        moveTask( move_task_id, from_sc_id, from_taskPos_Index, fromTaskIndex, to_sc_id, to_taakPos_Index, toTaskIndex ) {
+        async moveTask( move_task_id, from_sc_id, from_taskPos_Index, fromTaskIndex, to_sc_id, to_taakPos_Index, toTaskIndex ) {
 //        Update sc-id in task 
-            console.log('update set sc-id: ' + to_sc_id  + ' in task: '   + move_task_id)
+//            console.log('update set sc-id: ' + to_sc_id  + ' in task: '   + move_task_id)
 
 //        Delete task-id from current taskposition in current sc_id
-            console.log('taak-id = ' + move_task_id +    
-            ' in kolom_id=' + from_sc_id + 
-            ' en Taakvolgorde Index=' + from_taskPos_Index + 
-            ' wordt verwijderd van postitie ' + fromTaskIndex + '+1 uit deze kolom')
+//            console.log('taak-id = ' + move_task_id +    
+//            ' in kolom_id=' + from_sc_id + 
+//            ' en Taakvolgorde Index=' + from_taskPos_Index + 
+//            ' wordt verwijderd van postitie ' + fromTaskIndex + '+1 uit deze kolom')
             const posList = useBoardStore._pinia.state.value.BoardStore.taakPositie[from_taskPos_Index].positie
-            console.log('old position array before remove task: ' + posList )
+//            console.log('old position array before remove task: ' + posList )
             const task_id_delete = posList.splice(fromTaskIndex, 1)[0]
-            console.log('old position array after remove taak:' + useBoardStore._pinia.state.value.BoardStore.taakPositie[from_taskPos_Index].positie)
-            console.log('old position array after remove taak:' + task_id_delete)
+//            console.log('old position array after remove taak:' + useBoardStore._pinia.state.value.BoardStore.taakPositie[from_taskPos_Index].positie)
+      
+  
 
 //        Add task_id to taskposion of receiving sc_id 
-            console.log('taak-id = ' + move_task_id +    
-            ' wordt toegevoegd aan kolom_id=' + to_sc_id + 
-            ' en Taakvolgorde Index =' + to_taakPos_Index + 
-            '  postitie ' + toTaskIndex + '+1 uit deze kolom')
+//            console.log('taak-id = ' + move_task_id +    
+//            ' wordt toegevoegd aan kolom_id=' + to_sc_id + 
+//            ' en Taakvolgorde Index =' + to_taakPos_Index + 
+//            '  postitie ' + toTaskIndex + '+1 uit deze kolom')
             const posListN = useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie
-            console.log('new position array before adding task: ' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie )
+//            console.log('new position array before adding task: ' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie )
             const task_id_add = posListN.splice(toTaskIndex, 0, move_task_id)
-            console.log('new position array after adding taak:' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie)
+//            console.log('new position array after adding taak:' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].positie + ' met sc_id= ' + useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index].sc_id)
+            return EventService.updateTaakSCID(to_sc_id, move_task_id)
+                .then(response => {
+ //                   console.log('eend')
+                    this.taak=response.data
+                })
+                .catch(error => {
+                console.log('duim')
+                    throw error
+                }),
+                 EventService.updateTaakPositie(useBoardStore._pinia.state.value.BoardStore.taakPositie[to_taakPos_Index])
+                .then(response => {
+//                    console.log('duim')
+                    this.taakPositie=response.data
+                })
+                .catch(error => {
+//                console.log('cent')
+                    throw error
+                }),
+
+                 EventService.updateTaakPositie(useBoardStore._pinia.state.value.BoardStore.taakPositie[from_taskPos_Index])
+                .then(response => {
+//                    console.log('fuut')
+                    this.taakPostitie=response.data
+                })
+                .catch(error => {
+//                console.log('duim2')
+                    throw error
+                })
+ 
+ 
 
 //            const taskToMove = fromTasks.splice(fromTaskIndex, 1)[0]
 //            toTasks.splice(toTaskIndex, 0, taskToMove)

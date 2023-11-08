@@ -1,13 +1,8 @@
 <template>
     <div class="board">
- 
-
-
-
-
-        <div  v-for="(columnPosH, $columnPosHIdex) of boardStore.kolomPositie" :key="$columnPosHIdex" >     
-          <div class="flex flex-row items-start">
-                  <div  class='column' v-for="(columnPos, $columnPosIdex) of columnPosH.kolomPos" :key="$columnPosIdex" > 
+      <div  v-for="(columnPosH, $columnPosHIdex) of boardStore.kolomPositie" :key="$columnPosHIdex" >     
+        <div class="flex flex-row items-start">
+          <div  class='column' v-for="(columnPos, $columnPosIdex) of columnPosH.kolomPos" :key="$columnPosIdex" > 
             <div   v-for="(column, $columnIndex) of boardStore.columns" :key="$columnIndex">
               <div v-if="column.sc_id === columnPos">
                 <div class="flex items-center mb-2 font-bold" >
@@ -18,7 +13,7 @@
                   <div  v-for="(taakPosP, $taakPosPIndex) of taakPos.positie" :key="$taakPosPIndex" > 
     
                     <div  v-for="(taakDetail, $taakDetailIndex) of boardStore.taken" :key="$taakDetailIndex" @click="goToTask(taakDetail)"> 
-                      <div  v-if="column.sc_id === taakDetail.sc_id ">
+                    <div  v-if="column.sc_id === taakDetail.sc_id "> 
                         <div class="task" v-if="taakPosP === taakDetail.task_id" 
                           draggable="true"
                           @dragstart="pickupTask($event, columnPos, $taakPosIndex, taakDetail, $taakPosPIndex )"            
@@ -35,7 +30,7 @@
                               {{ taakDetail.omschrijving }}
                           </p>  
                         </div>
-                      </div>
+                      </div>   
                     </div>
                   </div>  
                 </div>   
@@ -112,7 +107,7 @@ setup() {
 
   },
   async onload() {
-//    console.log('Noot')
+    console.log('Noot')
     await this.boardStore.fetchColumns().catch(error=> {
       this.$router.push({
         name: 'ErrorDisplay',
@@ -240,7 +235,7 @@ setup() {
 //    console.log(e.dataTransfer)
     },
     pickupTask (e, columnPos, taakPosIndex, taakDetail, taakPosPIndex) {
-      console.log('from_sc_id=' + columnPos + 'TaskPos_Index=' + taakPosIndex + 'Task_id =' + taakDetail.task_id +  ' from plaats in array = ' + taakPosPIndex)
+     console.log('from_sc_id=' + columnPos + 'TaskPos_Index=' + taakPosIndex + 'Task_id =' + taakDetail.task_id +  ' from plaats in array = ' + taakPosPIndex)
 
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
@@ -253,7 +248,7 @@ setup() {
 
  //     console.log(e.dataTransfer)
     },
-    moveTaskOrColumn (e, columnPos, taakPos, $taakPosPIndex) {
+   moveTaskOrColumn (e, columnPos, taakPos, $taakPosPIndex) {
       const type = e.dataTransfer.getData('type')
       if (type === 'taak') {
         this.moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
@@ -262,21 +257,21 @@ setup() {
       }
 
     },
-    moveTask (e, to_sc_id, taakPosIndex, toTaskIndex) {
+    async moveTask (e, to_sc_id, taakPosIndex, toTaskIndex) {
       const from_taskPos_Index = e.dataTransfer.getData('from_taskPos_Index')
       const move_task_id = e.dataTransfer.getData('task_id')
       const fromTaskIndex = e.dataTransfer.getData('from_task_index')
       const from_sc_id = e.dataTransfer.getData('from_sc_id')
-      console.log('taak-id = ' + move_task_id +    
-                  ' in kolom_id=' + from_sc_id + 
-                  ' en Taakvolgorde Index= ' + from_taskPos_Index + 
-                  ' wordt verwijderd van postitie ' + fromTaskIndex + '+1 uit deze kolom')
-      console.log('en wordt toegevoed in kolom_id='+ to_sc_id + 
-                  ' en taakvolgorde Index= ' + taakPosIndex + 
-                  ' op postie ' + toTaskIndex + '+1')
+//      console.log('taak-id = ' + move_task_id +    
+//                  ' in kolom_id=' + from_sc_id + 
+//                  ' en Taakvolgorde Index= ' + from_taskPos_Index + 
+//                  ' wordt verwijderd van postitie ' + fromTaskIndex + '+1 uit deze kolom')
+//      console.log('en wordt toegevoed in kolom_id='+ to_sc_id + 
+//                  ' en taakvolgorde Index= ' + taakPosIndex + 
+//                  ' op postie ' + toTaskIndex + '+1')
 //      console.log(e)
 
-      this.boardStore.moveTask(
+      await this.boardStore.moveTask(
         move_task_id,
         from_sc_id,
         from_taskPos_Index,
@@ -285,8 +280,26 @@ setup() {
         to_sc_id,
         taakPosIndex,
         toTaskIndex
-      ) 
+      ),
+
+
+    await this.boardStore.fetchTaken().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    }),
+    await this.boardStore.fetchTaakPositie().catch(error=> {
+      this.$router.push({
+        name: 'ErrorDisplay',
+        params: { error: error}
+      })
+    }),  
+      await this.$router.push({ name: 'Board' }) 
     },
+
+
+
     moveColumn (e, toColumnIndex) {
       const fromColumnIndex = e.dataTransfer.getData('from-column-index')
 
