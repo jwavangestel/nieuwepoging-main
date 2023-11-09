@@ -4,7 +4,13 @@
         <div class="flex flex-row items-start">
           <div  class='column' v-for="(columnPos, $columnPosIdex) of columnPosH.kolomPos" :key="$columnPosIdex" > 
             <div   v-for="(column, $columnIndex) of boardStore.columns" :key="$columnIndex">
-              <div v-if="column.sc_id === columnPos">
+              <div v-if="column.sc_id === columnPos"
+                  draggable="true"
+                  @dragstart.self="pickupColumn($event, columnPos, $columnPosIdex )"            
+                  @dragover.prevent
+                  @dragenter.prevent
+                  @drop.stop="moveTaskOrColumn($event,  columnPos, $columnPosIdex)" 
+              >
                 <div class="flex items-center mb-2 font-bold" >
                   {{ column.description }}  
                 </div>
@@ -19,7 +25,7 @@
                           @dragstart="pickupTask($event, columnPos, $taakPosIndex, taakDetail, $taakPosPIndex )"            
                           @dragover.prevent
                           @dragenter.prevent
-                          @drop.stop="moveTask($event,  columnPos, $taakPosIndex, $taakPosPIndex)"                         
+                          @drop.stop="moveTaskOrColumn($event,  columnPos, $columnPosIdex, $taakPosIndex, $taakPosPIndex)"                         
                           >
                           <span class="w-full flex-no-shrink font-bold">
                       
@@ -227,12 +233,13 @@ setup() {
       e.target.value = ''
 
     },
-    pickupColumn (e, fromColumnIndex) {
+    pickupColumn (e, sc_id, fromColumnIndex) {
       e.dataTransfer.effectAllowed = 'move'
       e.dataTransfer.dropEffect = 'move'
+      e.dataTransfer.setData('sc_id', sc_id)
       e.dataTransfer.setData('from-column-index', fromColumnIndex)
       e.dataTransfer.setData('type', 'column')
-//    console.log(e.dataTransfer)
+    console.log(sc_id + ' ' + fromColumnIndex)
     },
     pickupTask (e, columnPos, taakPosIndex, taakDetail, taakPosPIndex) {
      console.log('from_sc_id=' + columnPos + 'TaskPos_Index=' + taakPosIndex + 'Task_id =' + taakDetail.task_id +  ' from plaats in array = ' + taakPosPIndex)
@@ -248,16 +255,17 @@ setup() {
 
  //     console.log(e.dataTransfer)
     },
-   moveTaskOrColumn (e, columnPos, taakPos, $taakPosPIndex) {
+   moveTaskOrColumn (e, columnPos, $columnPosIdex, $taakPosIndex, $taakPosPIndex) {
       const type = e.dataTransfer.getData('type')
+      console.log(columnPos + ' ' + $taakPosIndex + ' ' + $taakPosPIndex)
       if (type === 'taak') {
-        this.moveTask(e, toTasks, toTaskIndex !== undefined ? toTaskIndex : toTasks.length)
+        this.moveTask(e, columnPos, $taakPosIndex, $taakPosPIndex)
       } else {
-        this.moveColumn(e, toColumnIndex)
+        this.moveColumn(e, $columnPosIdex)
       }
 
     },
-    async moveTask (e, to_sc_id, taakPosIndex, toTaskIndex) {
+    async moveTask (e, to_sc_id, toTaakPosIndex, toTaskPosPIndex) {
       const from_taskPos_Index = e.dataTransfer.getData('from_taskPos_Index')
       const move_task_id = e.dataTransfer.getData('task_id')
       const fromTaskIndex = e.dataTransfer.getData('from_task_index')
@@ -278,8 +286,8 @@ setup() {
         fromTaskIndex,
 //      naar
         to_sc_id,
-        taakPosIndex,
-        toTaskIndex
+        toTaakPosIndex,
+        toTaskPosPIndex
       ),
 
 
@@ -300,12 +308,14 @@ setup() {
 
 
 
-    moveColumn (e, toColumnIndex) {
+    moveColumn (e, toColumnPosIndex) {
+      const sc_id = e.dataTransfer.getData('sc_id')
       const fromColumnIndex = e.dataTransfer.getData('from-column-index')
-
+      console.log('To columnPosIndex' + '=' + toColumnPosIndex)
       this.boardStore.moveColumn(
+        sc_id,
         fromColumnIndex,
-        toColumnIndex
+        toColumnPosIndex
       ) 
     }
   }

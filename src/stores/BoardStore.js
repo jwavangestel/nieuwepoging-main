@@ -202,10 +202,12 @@ export const useBoardStore = defineStore('BoardStore', {
             console.log(columnList)
             columnList.push(newColumn)           
         },
-        moveColumn(fromColumnIndex, toColumnIndex ) {
-            const columnList = useBoardStore._pinia.state.value.BoardStore.columns[0].jsonb_build_object.board
-            const columnToMove = columnList.splice(fromColumnIndex, 1)[0]
-            columnList.splice(toColumnIndex, 0, columnToMove)
+        moveColumn(sc_id, fromColumnPosP, toColumnPosP ) {
+            const columnList = useBoardStore._pinia.state.value.BoardStore.kolomPositie[0].kolomPos
+            console.log('vam' + columnList)
+            const columnToMove = columnList.splice(fromColumnPosP, 1)[0]
+            columnList.splice(toColumnPosP, 0, columnToMove)
+            console.log('naar' + columnList)
         }
 
  
